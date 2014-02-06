@@ -1,6 +1,7 @@
 <?php
 include_once('databaseConnection.php');
 include_once('functions.php');
+date_default_timezone_set('America/Los_Angeles');
 
 class eveMarketAPI {
 
