@@ -85,7 +85,7 @@ class eveMarketAPI {
 	    $lastDatabaseEntry = $this->getLatestEntry($typeid);
 	    // If the new lowest price is different than the last entry into the database then insert the new price into the database
 	    if($bestPriceLocation['price'] != $lastDatabaseEntry['price'] && $bestPriceLocation['price'] > 0 && $bestPriceLocation['quantity'] > 0)
-	    	$this->insertNewPrice($bestPriceLocation, $lowestCheck);
+	    	$this->insertNewPrice($bestPriceLocation);
 	}
 	// Gets the average market price for the given typeid from api.eve-central.com
 	public function getAveragePrice($typeid) {
@@ -184,7 +184,7 @@ class eveMarketAPI {
 	    return $price_list->fetch_array();
 	}
 	
-	public function insertNewPrice($bestPriceLocation, $lowestCheck) {
+	public function insertNewPrice($bestPriceLocation) {
 		// Create a new databaseConnection Instance in order to get the database connection info
 	    $databaseConnection = databaseConnection::getInstance();
 	    // Get the databse connection info
@@ -197,7 +197,6 @@ class eveMarketAPI {
         $location = $db->real_escape_string($bestPriceLocation['location']);
         $quantity = $db->real_escape_string($bestPriceLocation['quantity']);
         $reported_time = $db->real_escape_string($bestPriceLocation['reported_time']);
-        $lowestCheck = $lowestCheck ? 'Y' : 'N';
 
         // Insert the new price data into the market_prices table
         $query = "
@@ -208,21 +207,76 @@ class eveMarketAPI {
                 price,
                 location,
                 quantity,
-                reported_time,
-                lowest_check
+                reported_time
             )
             VALUES (
                 '$typeid',
                 '$price',
                 '$location',
                 '$quantity',
-                '$reported_time',
-                '$lowestCheck'
+                '$reported_time'
             )
         ";
 
         // Run the query
 		$db->query($query);
+	}
+	public function addPageView($ip, $useragent) {
+		// Create a new databaseConnection Instance in order to get the database connection info
+		$databaseConnection = databaseConnection::getInstance();
+		// Get the databse connection info
+		$databaseInfo = $databaseConnection->getDatabaseInfo();
+		// Connect to the database with mysqli
+		$db = new mysqli($databaseInfo['host'], $databaseInfo['username'], $databaseInfo['password'], $databaseInfo['db']);
+		
+		$locationData = $this->ipToLocation($ip);
+		
+		$ip = $db->real_escape_string($ip);
+		$useragent = $db->real_escape_string($useragent);
+		$country = $db->real_escape_string($locationData['countryCode']);
+		$state = $db->real_escape_string($locationData['region']);
+		$city = $db->real_escape_string($locationData['city']);
+		$lat = $db->real_escape_string($locationData['latitude']);
+		$lon = $db->real_escape_string($locationData['longitude']);
+		
+		// Insert the new user into the Users table
+		$query = "
+			INSERT INTO
+				eve_site_hits
+			(
+				ip,
+				useragent,
+				country,
+				state,
+				city,
+				latitude,
+				longitude
+			)
+			VALUES (
+				'$ip',
+				'$useragent',
+				'$country',
+				'$state',
+				'$city',
+				'$lat',
+				'$lon'
+			)
+		";
+		// Run the query
+		$db->query($query);
+	}
+	public function ipToLocation($ip) {
+		// Create a new databaseConnection Instance in order to get the database connection info
+		$databaseConnection = databaseConnection::getInstance();
+		// Get the databse connection info
+		$databaseInfo = $databaseConnection->getAPIKeys();
+
+		$user = $databaseInfo['locatorhq']['user'];
+		$key = $databaseInfo['locatorhq']['key'];
+		
+		$locationData = json_decode(file_get_contents('http://api.locatorhq.com/?key='.$key.'&user='.$user.'&format=json&ip='.$ip), true);
+		
+		return $locationData;
 	}
 
 }

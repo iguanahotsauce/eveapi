@@ -1,5 +1,15 @@
 <?php
 include_once('databaseConnection.php');
+include_once('eveMarketAPI.php');
+
+if($_GET['id'] == 34) {
+	$ip = $_SERVER['REMOTE_ADDR'];
+	$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	
+	$eveMarketAPI = eveMarketAPI::getInstance();
+	
+	$eveMarketAPI->addPageView($ip, $user_agent);
+}
 
 // Create a new databaseConnection Instance in order to get the database connection info
 $databaseConnection = databaseConnection::getInstance();
@@ -8,7 +18,7 @@ $databaseInfo = $databaseConnection->getDatabaseInfo();
 // Connect to the database with mysqli
 $db = new mysqli($databaseInfo['host'], $databaseInfo['username'], $databaseInfo['password'], $databaseInfo['db']);
 
-$id = $_GET['id'];
+$id = $db->real_escape_string($_GET['id']);
 
 $price_list = $db->query("
     SELECT
@@ -17,8 +27,7 @@ $price_list = $db->query("
     FROM
         market_prices
     WHERE
-        type_id = '$id' and
-        lowest_check = 'N'
+        type_id = '$id'
     ORDER BY
     	insert_date asc
 ");
