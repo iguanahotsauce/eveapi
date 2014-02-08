@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include_once('databaseConnection.php');
 include_once('functions.php');
 date_default_timezone_set('America/Los_Angeles');
@@ -56,49 +58,69 @@ class eveMarketAPI {
 		return $this->typeids;
 	}
 	// Get all of the sell orders from the api.eve-central.com
-	public function getSellOrders($typeid, $minimum_quantity) {
+	public function getOrders($typeid, $minimum_quantity, $type) {
 		// Use simplexml to create an object of all of the buy and sell orders for the given typeid with the parameters given
 		$marketData = simplexml_load_file('http://api.eve-central.com/api/quicklook?typeid='.$typeid.'&setminQ='.$minimum_quantity.'&sethours=1');
 		// Get the average market price for the given typeid
-		$average = $this->getAveragePrice($typeid);
+		$average = $this->getAveragePrice($typeid, $type);
 		
-		$sellOrders = array();
-		// Loop through each of the sell orders to make sure they are not in lowsec
-	    foreach($marketData->quicklook->sell_orders->order as $order) {
-	    	// If the sell order is not in lowsec then add it to the sellOrders array
-	    	if($order->security > .4 && $order->vol_remain > $minimum_quantity && $order->price < $average) {
-	    		$time = new DateTime(strtotime((string)$order->reported_time));
-	    		$sellOrders[] = array(
-	    			'price' => (float)$order->price,
-	    			'location' => (string)$order->station_name,
-	    			'quantity' => (int)$order->vol_remain,
-	    			'reported_time' => $time->format('m-d-Y H:i:s')
-	    		);
-	    	}
+		$orders = array();
+		if(strtoupper($type) == 'BUY') {
+			// Loop through each of the buy orders to make sure they are not in lowsec
+		    foreach($marketData->quicklook->sell_orders->order as $order) {
+		    	// If the sell order is not in lowsec then add it to the orders array
+		    	if($order->security > .4 && $order->vol_remain > $minimum_quantity && $order->price > $average) {
+		    		$time = new DateTime(strtotime((string)$order->reported_time));
+		    		$orders[] = array(
+		    			'price' => (float)$order->price,
+		    			'location' => (string)$order->station_name,
+		    			'quantity' => (int)$order->vol_remain,
+		    			'reported_time' => $time->format('m-d-Y H:i:s')
+		    		);
+		    	}
+		    }
 	    }
-	    // Sort all of the sell orders by price asc
-	    $sellOrders = $this->sortByPrice($sellOrders);
-	    // Get the price, quantity, and location of the lowest price on the market in highsec
-	    $bestPriceLocation = $this->getLowestPrice($sellOrders);
+	    else {
+		    // Loop through each of the sell orders to make sure they are not in lowsec
+		    foreach($marketData->quicklook->buy_orders->order as $order) {
+		    	// If the sell order is not in lowsec then add it to the sellOrders array
+		    	if($order->security > .4 && $order->vol_remain > $minimum_quantity && $order->price < $average) {
+		    		$time = new DateTime(strtotime((string)$order->reported_time));
+		    		$orders[] = array(
+		    			'price' => (float)$order->price,
+		    			'location' => (string)$order->station_name,
+		    			'quantity' => (int)$order->vol_remain,
+		    			'reported_time' => $time->format('m-d-Y H:i:s')
+		    		);
+		    	}
+		    }
+	    }
+	    // Sort all of the orders by price asc if they are sell orders and price desc if they are buy orders
+	    $orders = $this->sortByPrice($orders, $type);
+	    // Get the price, quantity, and location of the lowest price if it is for sell orders and highes price for buy orders on the market in highsec
+	    $bestPriceLocation = $this->getBestPrice($orders);
 	    // Set the typrid in the bestPriceLocation Array
 	    $bestPriceLocation['typeid'] = $typeid;
 	    // Gets the last entry in the database so we can see if the new lowest price is different
-	    $lastDatabaseEntry = $this->getLatestEntry($typeid);
+	    $lastDatabaseEntry = $this->getLatestEntry($typeid, $type);
 	    // If the new lowest price is different than the last entry into the database then insert the new price into the database
 	    if($bestPriceLocation['price'] != $lastDatabaseEntry['price'] && $bestPriceLocation['price'] > 0 && $bestPriceLocation['quantity'] > 0)
-	    	$this->insertNewPrice($bestPriceLocation);
+	    	$this->insertNewPrice($bestPriceLocation, $type);
 	}
 	// Gets the average market price for the given typeid from api.eve-central.com
-	public function getAveragePrice($typeid) {
+	public function getAveragePrice($typeid, $type) {
 		// Get the xml object of the marketstat for the given typeid
 		$averageData = simplexml_load_file('http://api.eve-central.com/api/marketstat?typeid='.$typeid);
 		// Pull the average market price from the object and make sure it is a float and not a string
-		$average = (float)$averageData->marketstat->type->sell->avg;
-		
+		if(strtoupper($type) == 'BUY')
+			$average = (float)$averageData->marketstat->type->buy->avg;
+		else
+			$average = (float)$averageData->marketstat->type->sell->avg;
+			
 		return $average;
 	}
 	// Sorts the sell orders by price
-	public function sortByPrice($orders) {
+	public function sortByPrice($orders, $type) {
 	
 		$n = sizeof($orders); 
 		   
@@ -117,10 +139,13 @@ class eveMarketAPI {
 	        }
 	    }
 	    
+	    if(strtoupper($type) == 'BUY')
+	    	$orders = array_reverse($orders);
+	    	
 	    return $orders;
 	}
-	// Gets the lowest price sell order that has a route that doesn't go through lowsec
-	public function getLowestPrice($orders) {
+	// Gets the lowest price sell order or highest price buy order that has a route that doesn't go through lowsec
+	public function getBestPrice($orders) {
 		$databaseConnection = databaseConnection::getInstance();
 		// The api keys array would be your eve-online keyID and vCode
 		$apiKeys = $databaseConnection->getAPIKeys();
@@ -160,7 +185,7 @@ class eveMarketAPI {
 	    return $order;
 	}
 	
-	public function getLatestEntry($typeid) {
+	public function getLatestEntry($typeid, $type) {
 		// Create a new databaseConnection Instance in order to get the database connection info
 	    $databaseConnection = databaseConnection::getInstance();
 	    // Get the databse connection info
@@ -169,6 +194,7 @@ class eveMarketAPI {
 	    $db = new mysqli($databaseInfo['host'], $databaseInfo['username'], $databaseInfo['password'], $databaseInfo['db']);
 	    
 	    $typeid = $db->real_escape_string($typeid);
+	    $type = $db->real_escape_string(strtoupper($type[0]));
 	    // Get the latest entry into the database for the given typeid
 	    $price_list = $db->query("
 	    	SELECT
@@ -176,7 +202,8 @@ class eveMarketAPI {
 	    	FROM
 	    		market_prices
 	    	WHERE
-	    		type_id = '$typeid'
+	    		type_id = '$typeid' and
+	    		type = '$type'
 	    	ORDER BY
 	    		insert_date desc
 	    	LIMIT 1
@@ -185,7 +212,7 @@ class eveMarketAPI {
 	    return $price_list->fetch_array();
 	}
 	
-	public function insertNewPrice($bestPriceLocation) {
+	public function insertNewPrice($bestPriceLocation, $type) {
 		// Create a new databaseConnection Instance in order to get the database connection info
 	    $databaseConnection = databaseConnection::getInstance();
 	    // Get the databse connection info
@@ -198,6 +225,7 @@ class eveMarketAPI {
         $location = $db->real_escape_string($bestPriceLocation['location']);
         $quantity = $db->real_escape_string($bestPriceLocation['quantity']);
         $reported_time = $db->real_escape_string($bestPriceLocation['reported_time']);
+        $type = $db->real_escape_string(strtoupper($type[0]));
 
         // Insert the new price data into the market_prices table
         $query = "
@@ -208,14 +236,16 @@ class eveMarketAPI {
                 price,
                 location,
                 quantity,
-                reported_time
+                reported_time,
+                type
             )
             VALUES (
                 '$typeid',
                 '$price',
                 '$location',
                 '$quantity',
-                '$reported_time'
+                '$reported_time',
+                '$type'
             )
         ";
 
