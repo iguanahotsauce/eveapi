@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 include_once('databaseConnection.php');
 include_once('eveMarketAPI.php');
 date_default_timezone_set('America/Los_Angeles');
-/*
+
 if($_GET['id'] == 34) {
 	$ip = $_SERVER['REMOTE_ADDR'];
 	$user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -46,4 +46,3 @@ while($info = $price_list->fetch_array()) {
 
 echo json_encode($price_array);
 exit;
-*/
