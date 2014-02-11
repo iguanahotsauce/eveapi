@@ -67,7 +67,7 @@ class eveMarketAPI {
 		$orders = array();
 		if(strtoupper($type) == 'BUY') {
 			// Loop through each of the buy orders to make sure they are not in lowsec
-		    foreach($marketData->quicklook->sell_orders->order as $order) {
+		    foreach($marketData->quicklook->buy_orders->order as $order) {
 		    	// If the sell order is not in lowsec then add it to the orders array
 		    	if($order->security > .4 && $order->vol_remain > $minimum_quantity && $order->price > $average) {
 		    		$time = new DateTime(strtotime((string)$order->reported_time));
@@ -82,7 +82,7 @@ class eveMarketAPI {
 	    }
 	    else {
 		    // Loop through each of the sell orders to make sure they are not in lowsec
-		    foreach($marketData->quicklook->buy_orders->order as $order) {
+		    foreach($marketData->quicklook->sell_orders->order as $order) {
 		    	// If the sell order is not in lowsec then add it to the sellOrders array
 		    	if($order->security > .4 && $order->vol_remain > $minimum_quantity && $order->price < $average) {
 		    		$time = new DateTime(strtotime((string)$order->reported_time));
