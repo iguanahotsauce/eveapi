@@ -10,7 +10,7 @@ class eveMarketAPI {
 	// Singleton instance.
 	private static $instance;
 	// Typeids that are stored in the database
-	public $typeids1 = array(
+	public $typeids = array(
 		'Tritanium' => array(
 			'type_id' => 34,
 			'minimum_quantity' => 950000
@@ -42,10 +42,7 @@ class eveMarketAPI {
 		'PLEX' => array(
 			'type_id' => 29668,
 			'minimum_quantity' => 1
-		)
-	);
-	
-	public $typeids2 = array(
+		),
 		'Myrmidon' => array(
 			'type_id' => 24700,
 			'minimum_quantity' => 1
@@ -77,10 +74,7 @@ class eveMarketAPI {
 		'Condensed Scordite' => array(
 			'type_id' => 17463,
 			'minimum_quantity' => 200000
-		)
-	);
-	
-	public $typeids3 = array(
+		),
 		'Massive Scordite' => array(
 			'type_id' => 17464,
 			'minimum_quantity' => 187000
@@ -112,10 +106,7 @@ class eveMarketAPI {
 		'Omber' => array(
 			'type_id' => 1227,
 			'minimum_quantity' => 58500
-		)
-	);
-	
-	public $typeids4 = array(
+		),
 		'Silvery Omber' => array(
 			'type_id' => 17867,
 			'minimum_quantity' => 63000
@@ -147,10 +138,7 @@ class eveMarketAPI {
 		'Pristine Jaspet' => array(
 			'type_id' => 17449,
 			'minimum_quantity' => 12500
-		)
-	);
-	
-	public $typeids5 = array(
+		),
 		'Hemorphite' => array(
 			'type_id' => 1231,
 			'minimum_quantity' => 6500
@@ -162,7 +150,7 @@ class eveMarketAPI {
 		'Radiant Hemorphite' => array(
 			'type_id' => 17449,
 			'minimum_quantity' => 8000
-		)
+		),
 		'Hedbergite' => array(
 			'type_id' => 21,
 			'minimum_quantity' => 8000
@@ -182,10 +170,7 @@ class eveMarketAPI {
 		'Iridescent Gneiss' => array(
 			'type_id' => 17865,
 			'minimum_quantity' => 2500
-		)
-	);
-	
-	public $typeids6 = array(
+		),
 		'Prismatic Gneiss' => array(
 			'type_id' => 17866,
 			'minimum_quantity' => 5000
@@ -218,9 +203,6 @@ class eveMarketAPI {
 			'type_id' => 17426,
 			'minimum_quantity' => 1500
 		),
-	);
-	
-	public $typeids7 = array(
 		'Mercoxit' => array(
 			'type_id' => 11396,
 			'minimum_quantity' => 300
@@ -252,10 +234,7 @@ class eveMarketAPI {
 		'Gleaming Alloy' => array(
 			'type_id' => 11740,
 			'minimum_quantity' => 450
-		)
-	);
-	
-	public $typeids8 = array(
+		),
 		'Lucent Compound' => array(
 			'type_id' => 11738,
 			'minimum_quantity' => 350
@@ -287,10 +266,7 @@ class eveMarketAPI {
 		'Heavy Assault Missile Launcher II' => array(
 			'type_id' => 25715,
 			'minimum_quantity' => 5
-		)
-	);
-	
-	public $typeids9 = array(
+		),
 		'Heavy Missile Launcher II' => array(
 			'type_id' => 2410,
 			'minimum_quantity' => 5
@@ -322,8 +298,8 @@ class eveMarketAPI {
 		return self::$instance;
 	}
 	// Return the typeid array so it can be used in other scripts
-	public function getTypeIDs($numberSet) {
-		return $this->typeids.$numberSet;
+	public function getTypeIDs() {
+		return $this->typeids;
 	}
 	// Get all of the sell orders from the api.eve-central.com
 	public function getOrders($typeid, $minimum_quantity, $type) {
