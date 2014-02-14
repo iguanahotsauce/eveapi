@@ -25,23 +25,27 @@ $id = $db->real_escape_string($_GET['id']);
 
 $price_list = $db->query("
     SELECT
-        price,
-        insert_date
+        mp.price,
+        mp.insert_date,
+        mp.quantity,
+        (select price from market_prices where type_id = '$id' and type = 'B' order by abs(TIME_TO_SEC(TIMEDIFF(insert_date,mp.insert_date))) limit 1) as buy_price
     FROM
-        market_prices
+        market_prices mp
     WHERE
-        type_id = '$id' and
-        type = 'S'
+        mp.type_id = '$id' and
+        mp.type = 'S'
     ORDER BY
-    	insert_date asc
+    	mp.insert_date asc
 ");
 
 $price_array = array();
 while($info = $price_list->fetch_array()) {
-    $price_array[] = array(
+    $price_array['data'][] = array(
     	strtotime($info['insert_date'])*1000,
     	(float)$info['price']
     );
+    $price_array['quantity'][strtotime($info['insert_date'])*1000] = (integer)$info['quantity'];
+    $price_array['buy_price'][strtotime($info['insert_date'])*1000] = (float)$info['buy_price'];
 }
 
 echo json_encode($price_array);

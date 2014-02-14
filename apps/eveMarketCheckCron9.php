@@ -5,7 +5,7 @@ include_once('eveMarketAPI.php');
 // Create a new instance of eveMarketAPI
 $eveMarketAPI = eveMarketAPI::getInstance();
 // Get the typeid list
-$typeids = $eveMarketAPI->getTypeIDs('1');
+$typeids = $eveMarketAPI->getTypeIDs('9');
 $types = array('BUY', 'SELL');
 // Loop through each typeid and check the sell orders to see if a new row needs to be inserted into the database
 foreach($types as $type) {

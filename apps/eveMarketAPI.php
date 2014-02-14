@@ -10,7 +10,7 @@ class eveMarketAPI {
 	// Singleton instance.
 	private static $instance;
 	// Typeids that are stored in the database
-	public $typeids = array(
+	public $typeids1 = array(
 		'Tritanium' => array(
 			'type_id' => 34,
 			'minimum_quantity' => 950000
@@ -44,6 +44,274 @@ class eveMarketAPI {
 			'minimum_quantity' => 1
 		)
 	);
+	
+	public $typeids2 = array(
+		'Myrmidon' => array(
+			'type_id' => 24700,
+			'minimum_quantity' => 1
+		),
+		'Harbinger' => array(
+			'type_id' => 24696,
+			'minimum_quantity' => 1
+		),
+		'Drake' => array(
+			'type_id' => 24698,
+			'minimum_quantity' => 1
+		),
+		'Veldspar' => array(
+			'type_id' => 1230,
+			'minimum_quantity' => 385000
+		),
+		'Concentrted Veldspar' => array(
+			'type_id' => 17470,
+			'minimum_quantity' => 366000
+		),
+		'Dense Veldspar' => array(
+			'type_id' => 17471,
+			'minimum_quantity' => 355000
+		),
+		'Scordite' => array(
+			'type_id' => 1228,
+			'minimum_quantity' => 210000
+		),
+		'Condensed Scordite' => array(
+			'type_id' => 17463,
+			'minimum_quantity' => 200000
+		)
+	);
+	
+	public $typeids3 = array(
+		'Massive Scordite' => array(
+			'type_id' => 17464,
+			'minimum_quantity' => 187000
+		),
+		'Pyroxeres' => array(
+			'type_id' => 1224,
+			'minimum_quantity' => 101000
+		),
+		'Viscous Pyroxeres' => array(
+			'type_id' => 17460,
+			'minimum_quantity' => 100000
+		),
+		'Solid Pyroxeres' => array(
+			'type_id' => 17459,
+			'minimum_quantity' => 97000
+		),
+		'Plagioclase' => array(
+			'type_id' => 18,
+			'minimum_quantity' => 95500
+		),
+		'Azure Plagioclase' => array(
+			'type_id' => 17455,
+			'minimum_quantity' => 95000
+		),
+		'Rich Plagioclase' => array(
+			'type_id' => 17456,
+			'minimum_quantity' => 88000
+		),
+		'Omber' => array(
+			'type_id' => 1227,
+			'minimum_quantity' => 58500
+		)
+	);
+	
+	public $typeids4 = array(
+		'Silvery Omber' => array(
+			'type_id' => 17867,
+			'minimum_quantity' => 63000
+		),
+		'Golden Omber' => array(
+			'type_id' => 17868,
+			'minimum_quantity' => 63000
+		),
+		'Kernite' => array(
+			'type_id' => 20,
+			'minimum_quantity' => 23000
+		),
+		'Luminous Kernite' => array(
+			'type_id' => 17452,
+			'minimum_quantity' => 24500
+		),
+		'Fiery Kernite' => array(
+			'type_id' => 17453,
+			'minimum_quantity' => 23500
+		),
+		'Jaspet' => array(
+			'type_id' => 1226,
+			'minimum_quantity' => 13000
+		),
+		'Pure Jaspet' => array(
+			'type_id' => 17448,
+			'minimum_quantity' => 12500
+		),
+		'Pristine Jaspet' => array(
+			'type_id' => 17449,
+			'minimum_quantity' => 12500
+		)
+	);
+	
+	public $typeids5 = array(
+		'Hemorphite' => array(
+			'type_id' => 1231,
+			'minimum_quantity' => 6500
+		),
+		'Vivid Hemorphite' => array(
+			'type_id' => 17444,
+			'minimum_quantity' => 7000
+		),
+		'Radiant Hemorphite' => array(
+			'type_id' => 17449,
+			'minimum_quantity' => 8000
+		)
+		'Hedbergite' => array(
+			'type_id' => 21,
+			'minimum_quantity' => 8000
+		),
+		'Vitric Hedbergite' => array(
+			'type_id' => 17440,
+			'minimum_quantity' => 7500
+		),
+		'Glazed Hedbergite' => array(
+			'type_id' => 17441,
+			'minimum_quantity' => 7500
+		),
+		'Gneiss' => array(
+			'type_id' => 1229,
+			'minimum_quantity' => 4000
+		),
+		'Iridescent Gneiss' => array(
+			'type_id' => 17865,
+			'minimum_quantity' => 2500
+		)
+	);
+	
+	public $typeids6 = array(
+		'Prismatic Gneiss' => array(
+			'type_id' => 17866,
+			'minimum_quantity' => 5000
+		),
+		'Dark Ochre' => array(
+			'type_id' => 1232,
+			'minimum_quantity' => 2500
+		),
+		'Onyx Ochre' => array(
+			'type_id' => 17436,
+			'minimum_quantity' => 1000
+		),
+		'Obsidian Ochre' => array(
+			'type_id' => 17437,
+			'minimum_quantity' => 3500
+		),
+		'Crokite' => array(
+			'type_id' => 1225,
+			'minimum_quantity' => 1500
+		),
+		'Arkanor' => array(
+			'type_id' => 22,
+			'minimum_quantity' => 1500
+		),
+		'Crimson Arkonor' => array(
+			'type_id' => 17425,
+			'minimum_quantity' => 1500
+		),
+		'Prime Arkonor' => array(
+			'type_id' => 17426,
+			'minimum_quantity' => 1500
+		),
+	);
+	
+	public $typeids7 = array(
+		'Mercoxit' => array(
+			'type_id' => 11396,
+			'minimum_quantity' => 300
+		),
+		'Magma Mercoxit' => array(
+			'type_id' => 17869,
+			'minimum_quantity' => 18
+		),
+		'Vitreous Mercoxit' => array(
+			'type_id' => 17870,
+			'minimum_quantity' => 13
+		),
+		'Condensed Alloy' => array(
+			'type_id' => 11739,
+			'minimum_quantity' => 1100
+		),
+		'Crystal Compound' => array(
+			'type_id' => 11741,
+			'minimum_quantity' => 1000
+		),
+		'Precious Alloy' => array(
+			'type_id' => 11737,
+			'minimum_quantity' => 800
+		),
+		'Sheen Compound' => array(
+			'type_id' => 11732,
+			'minimum_quantity' => 500
+		),
+		'Gleaming Alloy' => array(
+			'type_id' => 11740,
+			'minimum_quantity' => 450
+		)
+	);
+	
+	public $typeids8 = array(
+		'Lucent Compound' => array(
+			'type_id' => 11738,
+			'minimum_quantity' => 350
+		),
+		'Dark Compound' => array(
+			'type_id' => 11735,
+			'minimum_quantity' => 450
+		),
+		'Motley Compound' => array(
+			'type_id' => 11733,
+			'minimum_quantity' => 700
+		),
+		'Lustering Alloy' => array(
+			'type_id' => 11736,
+			'minimum_quantity' => 200
+		),
+		'Glossy Compound' => array(
+			'type_id' => 11724,
+			'minimum_quantity' => 1000
+		),
+		'Plush Compound' => array(
+			'type_id' => 11725,
+			'minimum_quantity' => 100
+		),
+		'Opulent Compound' => array(
+			'type_id' => 11734,
+			'minimum_quantity' => 300
+		),
+		'Heavy Assault Missile Launcher II' => array(
+			'type_id' => 25715,
+			'minimum_quantity' => 5
+		)
+	);
+	
+	public $typeids9 = array(
+		'Heavy Missile Launcher II' => array(
+			'type_id' => 2410,
+			'minimum_quantity' => 5
+		),
+		'Expanded Cargohold II' => array(
+			'type_id' => 1319,
+			'minimum_quantity' => 10
+		),
+		'Scourge Precision Heavy Missile' => array(
+			'type_id' => 24513,
+			'minimum_quantity' => 12000
+		),
+		'Scourge Rage Heavy Assault Missile' => array(
+			'type_id' => 2679,
+			'minimum_quantity' => 18000
+		),
+		'Scourge Javelin Heavy Assault Missile' => array(
+			'type_id' => 24492,
+			'minimum_quantity' => 15000
+		)
+	);
 	// Get the instance of eveMarketAPI
 	public static function GetInstance(){
 
@@ -54,8 +322,8 @@ class eveMarketAPI {
 		return self::$instance;
 	}
 	// Return the typeid array so it can be used in other scripts
-	public function getTypeIDs() {
-		return $this->typeids;
+	public function getTypeIDs($numberSet) {
+		return $this->typeids.$numberSet;
 	}
 	// Get all of the sell orders from the api.eve-central.com
 	public function getOrders($typeid, $minimum_quantity, $type) {
